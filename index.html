@@ -61,10 +61,36 @@
           // Create a new document, add it to the URL
           realtimeUtils.createRealtimeFile('New Quickstart File', function(createResponse) {
             window.history.pushState(null, null, '?id=' + createResponse.id);
+            insertPermission(createResponse.id);
             realtimeUtils.load(createResponse.id, onFileLoaded, onFileInitialize);
           });
         }
       }
+
+
+      /**
+       * Insert a new permission.
+       *
+       * @param {String} fileId ID of the file to insert permission for.
+       * @param {String} value User or group e-mail address, domain name or
+       *                       {@code null} "default" type.
+       * @param {String} type The value "user", "group", "domain" or "default".
+       * @param {String} role The value "owner", "writer" or "reader".
+       */
+
+
+      function insertPermission(fileId) {
+        var body = {
+          'type': "anyone",
+          'role': "writer"
+        };
+        var request = gapi.client.drive.permissions.insert({
+          'fileId': fileId,
+          'resource': body
+        });
+        request.execute(function(resp) { console.log('File made public!'); console.log(resp);});
+      }
+      
 
       // The first time a file is opened, it must be initialized with the
       // document structure. This function will add a collaborative string
